@@ -1,5 +1,6 @@
 package com.example.pdm_projeto.ui.gallery;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -54,15 +55,15 @@ public class GalleryFragment extends Fragment {
             public void onChanged(@Nullable String s) {
                 //textView.setText(s);
                 LinearLayout linearLayout1 = root.findViewById(R.id.linearLayout1);
-                for(int i = 0; i < 20; i++){
+                for(int i = 1; i <= 10; i++){
                     final ImageView image = new ImageView(getContext());
-                    //String imageUri = "http://pdmfcup.ddns.net:8084/PDM/images/City2.jpg";
+                    final int finalI = i;
                     Thread thread = new Thread(new Runnable() {
 
                         @Override
                         public void run() {
                             try  {
-                                image.setImageBitmap(getBitmapFromURL("pdmfcup.ddns.net:8084/PDM/images/City2.jpg"));
+                                image.setImageBitmap(Util.getBitmapFromURL("http://pdmfcup.ddns.net:8084/PDM/images/Mountains"+ finalI +".jpg"));
 
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -71,11 +72,14 @@ public class GalleryFragment extends Fragment {
                     });
 
                     thread.start();
-                    linearLayout1.addView(image,472,292);
+                    int width =  Resources.getSystem().getDisplayMetrics().widthPixels;
+
+                    linearLayout1.addView(image,500,500);
                 }
 
             }
         });
         return root;
     }
+
 }

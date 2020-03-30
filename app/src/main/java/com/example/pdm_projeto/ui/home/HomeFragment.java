@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.pdm_projeto.R;
 
+
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
@@ -30,6 +31,9 @@ public class HomeFragment extends Fragment {
                 textView.setText(s);
             }
         });
+
+
+
         return root;
     }
 }
