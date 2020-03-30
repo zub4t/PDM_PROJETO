@@ -17,14 +17,33 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.pdm_projeto.R;
-import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class GalleryFragment extends Fragment {
 
     private GalleryViewModel galleryViewModel;
-
+    public static Bitmap getBitmapFromURL(String src) {
+        try {
+            Log.e("src", src);
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            Log.e("Bitmap", "returned");
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("Exception", e.getMessage());
+            return null;
+        }
+    }
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         galleryViewModel = ViewModelProviders.of(this).get(GalleryViewModel.class);
@@ -36,19 +55,22 @@ public class GalleryFragment extends Fragment {
                 //textView.setText(s);
                 LinearLayout linearLayout1 = root.findViewById(R.id.linearLayout1);
                 for(int i = 0; i < 20; i++){
-                    ImageView image = new ImageView(getContext());
+                    final ImageView image = new ImageView(getContext());
+                    //String imageUri = "http://pdmfcup.ddns.net:8084/PDM/images/City2.jpg";
+                    Thread thread = new Thread(new Runnable() {
 
+                        @Override
+                        public void run() {
+                            try  {
+                                image.setImageBitmap(getBitmapFromURL("pdmfcup.ddns.net:8084/PDM/images/City2.jpg"));
 
-                    String imageUri = "http://pdmfcup.ddns.net:8084/PDM/images/City2.jpg";
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
 
-                   // Picasso.with(getContext()).load(imageUri).into(image);
-
-
-                    Picasso.with(getContext()).load(imageUri)
-                            .placeholder(R.drawable.teste2)
-                            .error(R.drawable.teste);
-
-
+                    thread.start();
                     linearLayout1.addView(image,472,292);
                 }
 
