@@ -2,6 +2,7 @@ package com.example.pdm_projeto.ui.gallery;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,9 +20,11 @@ public class Util {
             InputStream input = connection.getInputStream();
             Bitmap myBitmap = BitmapFactory.decodeStream(input);
             return myBitmap;
-        } catch (IOException e) {
-            // Log exception
+        } catch (Exception e) {
+            Log.e("errot",e+"");
             return null;
         }
     }
+
+    
 }

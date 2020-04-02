@@ -7,17 +7,15 @@
     android:layout_height="match_parent"
     tools:context=".ui.gallery.GalleryFragment">
 
-    <ScrollView
-        android:id="@+id/scrollView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:id="@+id/linearLayout1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp"
-            >
-        </LinearLayout>
-    </ScrollView>
+<GridView
+    android:id="@+id/gridView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:columnWidth="100dp"
+    android:numColumns="auto_fit"
+    android:verticalSpacing="24dp"
+    android:horizontalSpacing="10dp"
+    android:stretchMode="spacingWidthUniform"
+    />
 </LinearLayout>

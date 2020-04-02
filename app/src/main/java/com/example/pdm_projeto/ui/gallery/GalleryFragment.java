@@ -8,8 +8,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,12 +21,15 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.pdm_projeto.R;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GalleryFragment extends Fragment {
 
@@ -47,38 +53,22 @@ public class GalleryFragment extends Fragment {
     }
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        galleryViewModel = ViewModelProviders.of(this).get(GalleryViewModel.class);
         final View root = inflater.inflate(R.layout.fragment_gallery, container, false);
-        //final TextView textView = root.findViewById(R.id.text_gallery);
-        galleryViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                //textView.setText(s);
-                LinearLayout linearLayout1 = root.findViewById(R.id.linearLayout1);
-                for(int i = 1; i <= 10; i++){
-                    final ImageView image = new ImageView(getContext());
-                    final int finalI = i;
-                    Thread thread = new Thread(new Runnable() {
+       final List<ImageView> list = new ArrayList<>();
+        ImageView imageView=null;
+        for(int i = 0; i < 10;i++){
+             imageView = new ImageView(root.getContext());
+            String imageUri = "http://pdmfcup.ddns.net:8084/PDM/images/Water"+i+".jpg";
+            Picasso.with(root.getContext()).load(imageUri).resize(500,500).into(imageView);
+            list.add(imageView);
+        }
 
-                        @Override
-                        public void run() {
-                            try  {
-                                image.setImageBitmap(Util.getBitmapFromURL("http://pdmfcup.ddns.net:8084/PDM/images/Mountains"+ finalI +".jpg"));
+        ImageAdpter imageAdpter = new ImageAdpter(root.getContext(), list);
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-
-                    thread.start();
-                    int width =  Resources.getSystem().getDisplayMetrics().widthPixels;
-
-                    linearLayout1.addView(image,500,500);
-                }
-
-            }
-        });
+      //  ArrayAdapter<ImageView> adapter = new ArrayAdapter<ImageView>(root.getContext(),android.R.layout.simple_list_item_1, list);
+        GridView  gridView = (GridView) root.findViewById(R.id.gridView);
+        gridView.setAdapter(imageAdpter);
+        Log.e("tamanho da lista",list.size()+"");
         return root;
     }
 
