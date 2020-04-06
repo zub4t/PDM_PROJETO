@@ -5,6 +5,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.example.pdm_projeto.ImageDetails;
 
 import java.util.List;
 
@@ -36,4 +39,6 @@ public class ImageAdpter extends BaseAdapter {
         ImageView image = list.get(position);
         return image;
     }
+
+
 }

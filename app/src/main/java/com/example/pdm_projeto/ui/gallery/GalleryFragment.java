@@ -13,6 +13,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.pdm_projeto.ImageDetails;
 import com.example.pdm_projeto.R;
 import com.squareup.picasso.Picasso;
 
@@ -59,9 +61,22 @@ public class GalleryFragment extends Fragment {
         for(int i = 0; i < 10;i++){
              imageView = new ImageView(root.getContext());
             String imageUri = "http://pdmfcup.ddns.net:8084/PDM/images/Water"+i+".jpg";
-            Picasso.with(root.getContext()).load(imageUri).resize(500,500).into(imageView);
+            Picasso.with(root.getContext()).load(imageUri).resize(500,300).into(imageView);
             list.add(imageView);
         }
+
+
+        for(final ImageView image : list){
+
+            image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                   // Toast.makeText( getContext(),"algo", Toast.LENGTH_SHORT).show();
+                    openDialog(image);
+                }
+            });
+        }
+
 
         ImageAdpter imageAdpter = new ImageAdpter(root.getContext(), list);
 
@@ -70,6 +85,11 @@ public class GalleryFragment extends Fragment {
         gridView.setAdapter(imageAdpter);
         Log.e("tamanho da lista",list.size()+"");
         return root;
+    }
+    public void openDialog(ImageView v){
+        ImageDetails modal = new ImageDetails(v);
+
+        modal.show(getActivity().getSupportFragmentManager(),"tag");
     }
 
 }
