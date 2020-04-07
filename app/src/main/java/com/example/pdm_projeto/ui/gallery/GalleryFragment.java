@@ -88,7 +88,6 @@ public class GalleryFragment extends Fragment {
     }
     public void openDialog(ImageView v){
         ImageDetails modal = new ImageDetails(v);
-
         modal.show(getActivity().getSupportFragmentManager(),"tag");
     }
 
