@@ -19,17 +19,21 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.appcompat.widget.AlertDialogLayout;
 
+import com.example.pdm_projeto.ui.gallery.Util;
+
 public class ImageDetails extends AppCompatDialogFragment {
 
     ImageView imageview;
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),R.style.CustomAlertDialog);
+
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view =  inflater.inflate(R.layout.image_details,null);
        ImageView mainImage =  view.findViewById(R.id.imgDetails);
-         mainImage.setImageDrawable(imageview.getDrawable());
+         mainImage.setImageDrawable(Util.resize(imageview.getDrawable(),getResources(),630,300));
+
         mainImage.setPadding(0,0,0,0);
         TextView text =  view.findViewById(R.id.textDetails);
         text.setText("Descrição, Descrição, Descrição Descrição, Descrição Descrição, Descrição Descrição, Descrição Descrição, Descrição Descrição, Descrição Descrição, Descrição Descrição, Descrição Descrição, Descrição");
@@ -37,7 +41,7 @@ public class ImageDetails extends AppCompatDialogFragment {
 
         TextView title = new TextView(getActivity().getBaseContext());
 // You Can Customise your Title here
-        title.setText("Custom Centered Title");
+        title.setText("Descrição da imagem ");
         title.setBackgroundColor(Color.rgb(98,0,238));
         title.setPadding(10, 10, 10, 10);
         title.setGravity(Gravity.CENTER);
@@ -52,6 +56,7 @@ public class ImageDetails extends AppCompatDialogFragment {
 
             }
         });
+
         return builder.create();
     }
     public ImageDetails(ImageView view){

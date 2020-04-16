@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -58,10 +59,11 @@ public class GalleryFragment extends Fragment {
         final View root = inflater.inflate(R.layout.fragment_gallery, container, false);
        final List<ImageView> list = new ArrayList<>();
         ImageView imageView=null;
-        for(int i = 0; i < 10;i++){
+        for(int i = 0; i < 125;i++){
              imageView = new ImageView(root.getContext());
-            String imageUri = "http://pdmfcup.ddns.net:8084/PDM/images/Water"+i+".jpg";
-            Picasso.with(root.getContext()).load(imageUri).resize(500,300).into(imageView);
+            String imageUri = "http://pdmfcup.ddns.net:8084/PDM/images/1 ("+i+").jpg";
+            Picasso.with(root.getContext()).load(imageUri).resize(350 ,350).into(imageView);
+           imageView.setPadding(0, 0, 0, 0);
             list.add(imageView);
         }
 
@@ -88,7 +90,10 @@ public class GalleryFragment extends Fragment {
     }
     public void openDialog(ImageView v){
         ImageDetails modal = new ImageDetails(v);
+
         modal.show(getActivity().getSupportFragmentManager(),"tag");
+
+
     }
 
 }

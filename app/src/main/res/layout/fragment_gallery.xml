@@ -11,11 +11,13 @@
         android:id="@+id/gridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnWidth="100dp"
-        android:gravity="center"
-        android:numColumns="auto_fit"
-        android:stretchMode="spacingWidthUniform"
-        android:horizontalSpacing="10dp"
-        android:verticalSpacing="10dp"
-      />
+        android:adjustViewBounds="true"
+        android:background="#51FFFFFF"
+        android:clickable="true"
+        android:focusable="true"
+        android:horizontalSpacing="2dip"
+        android:numColumns="3"
+        android:scrollbarAlwaysDrawHorizontalTrack="false"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:verticalSpacing="2dip" />
 </LinearLayout>

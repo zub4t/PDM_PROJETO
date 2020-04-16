@@ -1,7 +1,10 @@
 package com.example.pdm_projeto.ui.gallery;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import java.io.IOException;
@@ -26,5 +29,9 @@ public class Util {
         }
     }
 
-    
+    public static  Drawable resize(Drawable image, Resources r,int w , int h ) {
+        Bitmap b = ((BitmapDrawable)image).getBitmap();
+        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, w, h, false);
+        return new BitmapDrawable(r, bitmapResized);
+    }
 }
