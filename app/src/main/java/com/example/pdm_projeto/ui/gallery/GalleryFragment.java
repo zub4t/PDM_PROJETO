@@ -1,5 +1,6 @@
 package com.example.pdm_projeto.ui.gallery;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -7,8 +8,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,13 +22,17 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.pdm_projeto.ImageDetails;
 import com.example.pdm_projeto.R;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GalleryFragment extends Fragment {
 
@@ -46,36 +56,44 @@ public class GalleryFragment extends Fragment {
     }
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        galleryViewModel = ViewModelProviders.of(this).get(GalleryViewModel.class);
         final View root = inflater.inflate(R.layout.fragment_gallery, container, false);
-        //final TextView textView = root.findViewById(R.id.text_gallery);
-        galleryViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                //textView.setText(s);
-                LinearLayout linearLayout1 = root.findViewById(R.id.linearLayout1);
-                for(int i = 0; i < 20; i++){
-                    final ImageView image = new ImageView(getContext());
-                    //String imageUri = "http://pdmfcup.ddns.net:8084/PDM/images/City2.jpg";
-                    Thread thread = new Thread(new Runnable() {
+       final List<ImageView> list = new ArrayList<>();
+        ImageView imageView=null;
+        for(int i = 0; i < 125;i++){
+             imageView = new ImageView(root.getContext());
+            String imageUri = "http://pdmfcup.ddns.net:8084/PDM/images/1 ("+i+").jpg";
+            Picasso.with(root.getContext()).load(imageUri).resize(350 ,350).into(imageView);
+           imageView.setPadding(0, 0, 0, 0);
+            list.add(imageView);
+        }
 
-                        @Override
-                        public void run() {
-                            try  {
-                                image.setImageBitmap(getBitmapFromURL("http://pdmfcup.ddns.net:8084/PDM/images/City2.jpg"));
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
+        for(final ImageView image : list){
 
-                    thread.start();
-                    linearLayout1.addView(image,472,292);
+            image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                   // Toast.makeText( getContext(),"algo", Toast.LENGTH_SHORT).show();
+                    openDialog(image);
                 }
+            });
+        }
 
-            }
-        });
+
+        ImageAdpter imageAdpter = new ImageAdpter(root.getContext(), list);
+
+      //  ArrayAdapter<ImageView> adapter = new ArrayAdapter<ImageView>(root.getContext(),android.R.layout.simple_list_item_1, list);
+        GridView  gridView = (GridView) root.findViewById(R.id.gridView);
+        gridView.setAdapter(imageAdpter);
+        Log.e("tamanho da lista",list.size()+"");
         return root;
     }
+    public void openDialog(ImageView v){
+        ImageDetails modal = new ImageDetails(v);
+
+        modal.show(getActivity().getSupportFragmentManager(),"tag");
+
+
+    }
+
 }
