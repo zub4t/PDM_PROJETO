@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private void uploadFile(Bitmap bitmap, String file_name) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReferenceFromUrl("gs://projeto-pdm-17aad.appspot.com");
-        StorageReference mountainImagesRef = storageRef.child("images/" + file_name + ".jpg");
+        StorageReference mountainImagesRef = storageRef.child("images/teste/" + file_name + ".jpg");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
         byte[] data = baos.toByteArray();
@@ -69,11 +69,15 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            DatabaseReference mDatabase;
-            mDatabase = FirebaseDatabase.getInstance().getReferenceFromUrl("https://projeto-pdm-17aad.firebaseio.com/");
+            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReferenceFromUrl("https://projeto-pdm-17aad.firebaseio.com/");
 
-            mDatabase.child("images").child("1").child("nome").setValue("imagem numero 1");
-            uploadFile(imageBitmap, "olamarco");
+            DatabaseReference pushedDatabase = mDatabase.child("imagens").push();
+
+            String imagem_id = pushedDatabase.getKey();
+            pushedDatabase.child("nome").setValue("imagem_" + imagem_id);
+            pushedDatabase.child("descricao").setValue("descricao fixolas");
+
+            uploadFile(imageBitmap, imagem_id);
         }
     }
     private void dispatchTakePictureIntent() {

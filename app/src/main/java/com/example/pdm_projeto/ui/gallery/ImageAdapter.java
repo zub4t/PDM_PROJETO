@@ -11,10 +11,10 @@ import com.example.pdm_projeto.ImageDetails;
 
 import java.util.List;
 
-public class ImageAdpter extends BaseAdapter {
+public class ImageAdapter extends BaseAdapter {
     private Context mContext  = null;
     private  List<ImageView> list =  null;
-    public ImageAdpter(Context context, List<ImageView> list) {
+    public ImageAdapter(Context context, List<ImageView> list) {
         this.mContext = context;
         this.list = list;
     }
