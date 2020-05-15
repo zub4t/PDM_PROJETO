@@ -36,7 +36,6 @@ import java.util.List;
 
 public class GalleryFragment extends Fragment {
 
-    private GalleryViewModel galleryViewModel;
     public static Bitmap getBitmapFromURL(String src) {
         try {
             Log.e("src", src);
