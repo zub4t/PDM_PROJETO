@@ -18,11 +18,4 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/mobile_navigation" />
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/dialog_bg"
-        tools:layout_editor_absoluteX="128dp"
-        tools:layout_editor_absoluteY="173dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
