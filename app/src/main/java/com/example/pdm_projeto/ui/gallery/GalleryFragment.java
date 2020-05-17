@@ -23,16 +23,18 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeMap;
 
 public class GalleryFragment extends Fragment {
-    private List<String> imageList = new LinkedList<>();
+    private HashMap<String,String> imageMap = new HashMap<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_gallery, container, false);
-       final List<ImageView> list = new ArrayList<>();
+       final HashMap<ImageView, String> list = new HashMap<>();
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReferenceFromUrl("https://projeto-pdm-17aad.firebaseio.com/");
         DatabaseReference mDatabaseRef = mDatabase.child("imagens");
         ValueEventListener eventListener = new ValueEventListener() {
@@ -40,26 +42,30 @@ public class GalleryFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds : dataSnapshot.getChildren()) {
                     String key = ds.getKey();
-                    imageList.add(key);
+                    Object value = ds.getValue();
+                    HashMap<String, String> conexao = (HashMap<String, String>) value;
+                    String descricao = conexao.get("descricao");
+                    imageMap.put(key, descricao);
                 }
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 StorageReference storageRef = storage.getReferenceFromUrl("gs://projeto-pdm-17aad.appspot.com");
-                for(String imagem : imageList){
+                for(String imagem : imageMap.keySet()){
                     final ImageView imageView = new ImageView(root.getContext());
                     String imageUri = "https://firebasestorage.googleapis.com/v0/b/projeto-pdm-17aad.appspot.com/o/images%2Fteste%2F" + imagem + ".jpg?alt=media&token=1727c60b-68ce-421e-a8e2-d7907d654a22";
                     Picasso.with(root.getContext()).load(imageUri).resize(350 ,350).into(imageView);
                     imageView.setPadding(0, 0, 0, 0);
-                    list.add(imageView);
+                    list.put(imageView, imageMap.get(imagem));
                 }
-                for(final ImageView image : list){
+                for(final ImageView image : list.keySet()){
                     image.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            openDialog(image);
+                            openDialog(image, list.get(image));
                         }
                     });
                 }
-                ImageAdapter imageAdapter = new ImageAdapter(root.getContext(), list);
+                List<ImageView> keys = new ArrayList<>(list.keySet());
+                ImageAdapter imageAdapter = new ImageAdapter(root.getContext(), keys);
                 GridView  gridView = (GridView) root.findViewById(R.id.gridView);
                 gridView.setAdapter(imageAdapter);
             }
@@ -70,13 +76,9 @@ public class GalleryFragment extends Fragment {
         mDatabaseRef.addListenerForSingleValueEvent(eventListener);
         return root;
     }
-    public void openDialog(ImageView v){
-        ImageDetails modal = new ImageDetails(v);
-
-
+    public void openDialog(ImageView v, String description){
+        ImageDetails modal = new ImageDetails(v, description);
         modal.show(getActivity().getSupportFragmentManager(),"tag");
-
-
     }
 
 }

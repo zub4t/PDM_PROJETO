@@ -24,6 +24,7 @@ import com.example.pdm_projeto.ui.gallery.Util;
 public class ImageDetails extends AppCompatDialogFragment {
 
     ImageView imageview;
+    String description;
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class ImageDetails extends AppCompatDialogFragment {
 
         mainImage.setPadding(0,0,0,0);
         TextView text =  view.findViewById(R.id.textDetails);
-        text.setText("Descrição, Descrição, Descrição Descrição, Descrição Descrição, Descrição Descrição, Descrição Descrição, Descrição Descrição, Descrição Descrição, Descrição Descrição, Descrição Descrição, Descrição");
+        text.setText(this.description);
         Log.d("img ",mainImage.getDrawable().toString());
 
         TextView title = new TextView(getActivity().getBaseContext());
@@ -59,7 +60,8 @@ public class ImageDetails extends AppCompatDialogFragment {
 
         return builder.create();
     }
-    public ImageDetails(ImageView view){
+    public ImageDetails(ImageView view, String description){
+        this.description = description;
         this.imageview = view ;
     }
 }
