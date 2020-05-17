@@ -6,13 +6,20 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import com.android.volley.*;
+import com.android.volley.toolbox.Volley;
+import com.example.pdm_projeto.Utils.Constant;
+import com.example.pdm_projeto.Utils.DataPart;
+import com.example.pdm_projeto.Utils.VolleyMultipartRequest;
 import com.example.pdm_projeto.ui.gallery.GalleryFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -35,20 +42,29 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     static final int REQUEST_IMAGE_CAPTURE = 1;
+
     private void uploadFile(Bitmap bitmap, String file_name) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReferenceFromUrl("gs://projeto-pdm-17aad.appspot.com");
         StorageReference mountainImagesRef = storageRef.child("images/teste/" + file_name + ".jpg");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        uploadBitmap(bitmap, file_name);
         byte[] data = baos.toByteArray();
+        final String imageString = Base64.encodeToString(data, Base64.DEFAULT);
+
         UploadTask uploadTask = mountainImagesRef.putBytes(data);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
@@ -63,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -74,18 +91,29 @@ public class MainActivity extends AppCompatActivity {
             DatabaseReference pushedDatabase = mDatabase.child("imagens").push();
 
             String imagem_id = pushedDatabase.getKey();
-            pushedDatabase.child("nome").setValue("imagem_" + imagem_id);
-            pushedDatabase.child("descricao").setValue("descricao fixolas");
-
+            pushedDatabase.child("nome").setValue(imagem_id);
+            pushedDatabase.child("descricao").setValue("working on it, please wait :D");
             uploadFile(imageBitmap, imagem_id);
         }
     }
+
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        /*
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.parse("package:" + getPackageName()));
+            finish();
+            startActivity(intent);
+            return;
+        }*/
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,4 +153,60 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+    /*
+     * The method is taking Bitmap as an argument
+     * then it will return the byte[] array for the given bitmap
+     * and we will send this array to the server
+     * here we are using PNG Compression with 80% quality
+     * you can give quality between 0 to 100
+     * 0 means worse quality
+     * 100 means best quality
+     * */
+    public byte[] getFileDataFromDrawable(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    private void uploadBitmap(final Bitmap bitmap, final String id) {
+        //our custom volley request
+        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, Constant.SERVIDOR_URL,
+                new Response.Listener<NetworkResponse>() {
+                    @Override
+                    public void onResponse(NetworkResponse response) {
+                        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReferenceFromUrl("https://projeto-pdm-17aad.firebaseio.com/");
+                        DatabaseReference alterDatabase = mDatabase.child("imagens").child(id);
+                        try {
+                            JSONObject obj = new JSONObject(new String(response.data));
+                            String food = obj.getString("food");
+                            alterDatabase.child("descricao").setValue(food);
+                        } catch (JSONException e) {
+                            alterDatabase.child("descricao").setValue("nao e comida");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            /*
+             * Here we are passing image by renaming it with a unique name
+             * */
+            @Override
+            protected Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                long imagename = System.currentTimeMillis();
+                params.put("pic", new DataPart(imagename + ".png", getFileDataFromDrawable(bitmap)));
+                return params;
+            }
+        };
+
+        //adding the request to volley
+        Volley.newRequestQueue(this).add(volleyMultipartRequest);
+    }
 }
+
+
