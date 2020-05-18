@@ -180,9 +180,10 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             JSONObject obj = new JSONObject(new String(response.data));
                             String food = obj.getString("food");
-                            alterDatabase.child("descricao").setValue(food);
+                            String food_description = obj.getString("food_description");
+                            alterDatabase.child("descricao").setValue(food + "\n" + food_description);
                         } catch (JSONException e) {
-                            alterDatabase.child("descricao").setValue("nao e comida");
+                            alterDatabase.child("descricao").setValue("Not a food");
                         }
                     }
                 },
