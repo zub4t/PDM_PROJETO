@@ -42,7 +42,7 @@ public class ImageDetails extends AppCompatDialogFragment {
 
         TextView title = new TextView(getActivity().getBaseContext());
 // You Can Customise your Title here
-        title.setText("Descrição da imagem ");
+        title.setText("Image Description");
         title.setBackgroundColor(Color.rgb(98,0,238));
         title.setPadding(10, 10, 10, 10);
         title.setGravity(Gravity.CENTER);
@@ -51,7 +51,7 @@ public class ImageDetails extends AppCompatDialogFragment {
 
 
         builder.setView(view).setCustomTitle(title)
-        .setNegativeButton("Voltar", new DialogInterface.OnClickListener() {
+        .setNegativeButton("Back", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 

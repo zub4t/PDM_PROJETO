@@ -1,13 +1,18 @@
 package com.example.pdm_projeto;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Layout;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.widget.GridView;
@@ -17,10 +22,12 @@ import android.widget.Toast;
 
 import com.android.volley.*;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.example.pdm_projeto.Utils.Constant;
 import com.example.pdm_projeto.Utils.DataPart;
 import com.example.pdm_projeto.Utils.VolleyMultipartRequest;
 import com.example.pdm_projeto.ui.gallery.GalleryFragment;
+import com.example.pdm_projeto.ui.gallery.Util;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -50,17 +57,44 @@ import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import pl.droidsonroids.gif.GifImageView;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    public void setDescription(String desc){
+        Util.setDescription(desc, this);
+    }
+    public void saveOrd(int ord){
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("ord", ord);
+        editor.commit();
+    }
 
+    public int getOrd(){
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        int defaultValue = 0;
+        int ord = sharedPref.getInt("ord", defaultValue);
+        return ord;
+    }
+    public void openDialog(Bitmap v){
+        ImageView imageView = new ImageView(this);
+        imageView.setImageBitmap(v);
+        ImageDetails modal = new ImageDetails(imageView, "Working on it");
+        Util.showLoadingGif(true, this);
+        modal.show(this.getSupportFragmentManager(),"tag");
+
+    }
     private void uploadFile(Bitmap bitmap, String file_name) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReferenceFromUrl("gs://projeto-pdm-17aad.appspot.com");
         StorageReference mountainImagesRef = storageRef.child("images/teste/" + file_name + ".jpg");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        openDialog(bitmap);
+
         uploadBitmap(bitmap, file_name);
         byte[] data = baos.toByteArray();
         final String imageString = Base64.encodeToString(data, Base64.DEFAULT);
@@ -77,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
             }
         });
-
     }
 
     @Override
@@ -93,6 +126,8 @@ public class MainActivity extends AppCompatActivity {
             String imagem_id = pushedDatabase.getKey();
             pushedDatabase.child("nome").setValue(imagem_id);
             pushedDatabase.child("descricao").setValue("working on it, please wait :D");
+            pushedDatabase.child("ord").setValue(getOrd());
+            saveOrd(getOrd() + 1);
             uploadFile(imageBitmap, imagem_id);
         }
     }
@@ -171,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void uploadBitmap(final Bitmap bitmap, final String id) {
         //our custom volley request
-        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, Constant.SERVIDOR_URL,
+        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, Constant.SERVIDOR_URL + "?ord="+String.valueOf(getOrd() - 1),
                 new Response.Listener<NetworkResponse>() {
                     @Override
                     public void onResponse(NetworkResponse response) {
@@ -182,8 +217,11 @@ public class MainActivity extends AppCompatActivity {
                             String food = obj.getString("food");
                             String food_description = obj.getString("food_description");
                             alterDatabase.child("descricao").setValue(food + "\n" + food_description);
+                            setDescription(food + "\n" + food_description);
+
                         } catch (JSONException e) {
                             alterDatabase.child("descricao").setValue("Not a food");
+                            setDescription("Not a food");
                         }
                     }
                 },
