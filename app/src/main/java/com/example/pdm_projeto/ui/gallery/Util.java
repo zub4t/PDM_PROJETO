@@ -29,23 +29,9 @@ public class Util {
         final View textEntryView = factory.inflate(R.layout.image_details, null);
         TextView description = (TextView)  textEntryView.findViewById(R.id.textDetails);
         description.setText(desc);
-    }
-    public static void showLoadingGif(boolean show, Activity activity){
-        final LayoutInflater factory = activity.getLayoutInflater();
-
-        final View textEntryView = factory.inflate(R.layout.image_details, null);
-        GifImageView gif = (GifImageView)  textEntryView.findViewById(R.id.loading);
-        if(show){
-            gif.setVisibility(View.VISIBLE);
-        } else {
-            gif.setVisibility(View.INVISIBLE);
-        }
-        //tentar dar refresh talvez
-/*
-        ViewGroup vg = activity.findViewById(R.id.image_layout);
-        vg.invalidate();*/
 
     }
+
     public static Bitmap getBitmapFromURL(String src) {
         try {
             URL url = new URL(src);

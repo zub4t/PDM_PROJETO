@@ -108,7 +108,7 @@
             android:layout_width="205dp"
             android:layout_height="44dp"
             android:background="@drawable/bg_singin"
-            android:text="sing in"
+            android:text="@string/common_signin_button_text"
             android:textColor="#FFFFFF"
             android:textColorHighlight="#FFFFFF"
             android:textColorHint="#FBFAFA"

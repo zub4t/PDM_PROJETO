@@ -70,7 +70,7 @@ public class GalleryFragment extends Fragment {
                     //image_list.add(Integer.parseInt(imageContext.ord), imageView);
                 }
                 List<ImageView> image_list_list = new ArrayList<>();
-                for(int i = 0; i < max_pos; i++){
+                for(int i = 0; i < 100; i++){
                     final int finalI = i;
                     if(image_list[i] != null){
                         image_list_list.add(image_list[i]);
@@ -95,7 +95,7 @@ public class GalleryFragment extends Fragment {
         return root;
     }
     public void openDialog(ImageView v, String description){
-        ImageDetails modal = new ImageDetails(v, description);
+        ImageDetails modal = new ImageDetails(v, description,false);
         modal.show(getActivity().getSupportFragmentManager(),"tag");
     }
 

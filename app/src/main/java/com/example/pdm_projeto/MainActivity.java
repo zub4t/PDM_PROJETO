@@ -60,40 +60,43 @@ import java.util.Map;
 import pl.droidsonroids.gif.GifImageView;
 
 public class MainActivity extends AppCompatActivity {
-
+    ImageDetails modal;
     private AppBarConfiguration mAppBarConfiguration;
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    public void setDescription(String desc){
+
+    public void setDescription(String desc) {
         Util.setDescription(desc, this);
     }
-    public void saveOrd(int ord){
+
+    public void saveOrd(int ord) {
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt("ord", ord);
         editor.commit();
     }
 
-    public int getOrd(){
+    public int getOrd() {
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         int defaultValue = 0;
         int ord = sharedPref.getInt("ord", defaultValue);
         return ord;
     }
-    public void openDialog(Bitmap v){
+
+    public void openDialog(Bitmap v, String str,boolean show) {
         ImageView imageView = new ImageView(this);
         imageView.setImageBitmap(v);
-        ImageDetails modal = new ImageDetails(imageView, "Working on it");
-        Util.showLoadingGif(true, this);
-        modal.show(this.getSupportFragmentManager(),"tag");
+        modal = new ImageDetails(imageView, str, show);
+        modal.show(this.getSupportFragmentManager(), "tag");
 
     }
+
     private void uploadFile(Bitmap bitmap, String file_name) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReferenceFromUrl("gs://projeto-pdm-17aad.appspot.com");
         StorageReference mountainImagesRef = storageRef.child("images/teste/" + file_name + ".jpg");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        openDialog(bitmap);
+        openDialog(bitmap, "working on it",true);
 
         uploadBitmap(bitmap, file_name);
         byte[] data = baos.toByteArray();
@@ -206,7 +209,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void uploadBitmap(final Bitmap bitmap, final String id) {
         //our custom volley request
-        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, Constant.SERVIDOR_URL + "?ord="+String.valueOf(getOrd() - 1),
+        Log.e("teste", "teste");
+        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, Constant.SERVIDOR_URL + "?ord=" + String.valueOf(getOrd() - 1),
                 new Response.Listener<NetworkResponse>() {
                     @Override
                     public void onResponse(NetworkResponse response) {
@@ -217,11 +221,16 @@ public class MainActivity extends AppCompatActivity {
                             String food = obj.getString("food");
                             String food_description = obj.getString("food_description");
                             alterDatabase.child("descricao").setValue(food + "\n" + food_description);
-                            setDescription(food + "\n" + food_description);
+                            modal.dismiss();
+
+                            openDialog(bitmap, food_description,false);
+
 
                         } catch (JSONException e) {
                             alterDatabase.child("descricao").setValue("Not a food");
-                            setDescription("Not a food");
+                            modal.dismiss();
+                            openDialog(bitmap, "Not a food",false);
+
                         }
                     }
                 },

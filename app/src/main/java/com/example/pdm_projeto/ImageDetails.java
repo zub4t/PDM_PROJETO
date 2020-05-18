@@ -25,19 +25,27 @@ public class ImageDetails extends AppCompatDialogFragment {
 
     ImageView imageview;
     String description;
+    LayoutInflater inflater;
+    boolean show=false;
+    View view;
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),R.style.CustomAlertDialog);
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view =  inflater.inflate(R.layout.image_details,null);
+         inflater = getActivity().getLayoutInflater();
+         view =  inflater.inflate(R.layout.image_details,null);
        ImageView mainImage =  view.findViewById(R.id.imgDetails);
          mainImage.setImageDrawable(Util.resize(imageview.getDrawable(),getResources(),630,300));
 
         mainImage.setPadding(0,0,0,0);
         TextView text =  view.findViewById(R.id.textDetails);
         text.setText(this.description);
+        if(show){
+            view.findViewById(R.id.loading).setVisibility(View.VISIBLE);
+
+        }
+
         Log.d("img ",mainImage.getDrawable().toString());
 
         TextView title = new TextView(getActivity().getBaseContext());
@@ -56,12 +64,15 @@ public class ImageDetails extends AppCompatDialogFragment {
             public void onClick(DialogInterface dialog, int which) {
 
             }
+
         });
 
         return builder.create();
     }
-    public ImageDetails(ImageView view, String description){
+
+    public ImageDetails(ImageView view, String description,Boolean show){
         this.description = description;
         this.imageview = view ;
+        this.show = show;
     }
 }

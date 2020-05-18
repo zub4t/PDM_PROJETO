@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/image_layout"
     android:layout_width="400dp"
-    android:layout_height="400dp"
-    android:gravity="center_horizontal"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
     android:background="@drawable/dialog_bg"
 
@@ -13,26 +12,46 @@
         android:id="@+id/imgDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"
         android:contentDescription="TODO"
-        android:paddingTop="25dp" />
+        android:paddingTop="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/textDetails"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textDetails"
-        android:layout_width="348dp"
+        android:layout_width="200dp"
         android:layout_height="121dp"
-        android:layout_marginTop="10px"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
         android:background="@drawable/description_box_text"
         android:gravity="center"
         android:paddingLeft="10px"
         android:paddingTop="25px"
         android:paddingRight="10px"
-        android:paddingBottom="25px" />
+        android:paddingBottom="25px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.765" />
 
     <pl.droidsonroids.gif.GifImageView
+
         android:id="@+id/loading"
-        android:layout_width="140dp"
-        android:layout_height="140dp"
-        android:background="#ffffff"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:src="@drawable/loading"
-        android:visibility="invisible" />
-</LinearLayout>
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.679" />
+</androidx.constraintlayout.widget.ConstraintLayout>
