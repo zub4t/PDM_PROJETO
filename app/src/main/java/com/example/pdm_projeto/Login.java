@@ -46,44 +46,43 @@ public class Login extends AppCompatActivity {
         userSignUp = findViewById(R.id.singup);
 
         firebaseAuth = FirebaseAuth.getInstance();
-
-        userLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-                String defaultValue = "";
-                String login = sharedPref.getString("login", defaultValue);
-
-
-                progressBar.setVisibility(View.VISIBLE);
-                if (login.equals("")) {
-                    firebaseAuth.signInWithEmailAndPassword(userEmail.getText().toString(),
-                            userPass.getText().toString())
-                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    progressBar.setVisibility(View.GONE);
-                                    if (task.isSuccessful()) {
-                                        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-                                        SharedPreferences.Editor editor = sharedPref.edit();
-                                        editor.putString("login", String.valueOf(userEmail.getText()));
-                                        editor.commit();
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        String defaultValue = "";
+        final String login = sharedPref.getString("login", defaultValue);
+        if(login.equals("")){
+            userLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    if (login.equals("")) {
+                        firebaseAuth.signInWithEmailAndPassword(userEmail.getText().toString(),
+                                userPass.getText().toString())
+                                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        progressBar.setVisibility(View.GONE);
+                                        if (task.isSuccessful()) {
+                                            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor editor = sharedPref.edit();
+                                            editor.putString("login", String.valueOf(userEmail.getText()));
+                                            editor.commit();
 
 
-                                        startActivity(new Intent(Login.this, MainActivity.class));
-                                    } else {
-                                        Toast.makeText(Login.this, task.getException().getMessage(),
-                                                Toast.LENGTH_LONG).show();
+                                            startActivity(new Intent(Login.this, MainActivity.class));
+                                        } else {
+                                            Toast.makeText(Login.this, task.getException().getMessage(),
+                                                    Toast.LENGTH_LONG).show();
+                                        }
                                     }
-                                }
-                            });
-                }else{
-                    startActivity(new Intent(Login.this, MainActivity.class));
-
-
+                                });
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            startActivity(new Intent(Login.this, MainActivity.class));
+        }
+
+
 
         userSignUp.setOnClickListener(new OnClickListener() {
             @Override

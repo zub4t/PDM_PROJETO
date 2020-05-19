@@ -79,7 +79,7 @@ public class GalleryFragment extends Fragment {
                             public void onClick(View v) {
                                 openDialog(image_list[finalI], list.get(image_list[finalI]).description);
                             }
-                        });
+                    });
                     }
 
                 }
