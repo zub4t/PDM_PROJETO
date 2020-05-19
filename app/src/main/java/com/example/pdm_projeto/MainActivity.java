@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
                             alterDatabase.child("descricao").setValue(food + "\n" + food_description);
                             modal.dismiss();
 
-                            openDialog(bitmap, food_description,false);
+                            openDialog(bitmap, food+"\n"+food_description,false);
 
 
                         } catch (JSONException e) {
