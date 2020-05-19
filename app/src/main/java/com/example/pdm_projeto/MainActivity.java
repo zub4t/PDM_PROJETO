@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(NetworkResponse response) {
                         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReferenceFromUrl("https://projeto-pdm-17aad.firebaseio.com/");
-                        DatabaseReference alterDatabase = mDatabase.child("imagens").child(getEmail()).child(id);
+                        DatabaseReference alterDatabase = mDatabase.child("images").child(getEmail()).child(id);
                         try {
                             JSONObject obj = new JSONObject(new String(response.data));
                             String food = obj.getString("food");
