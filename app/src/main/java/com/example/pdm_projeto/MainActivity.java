@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
             DatabaseReference pushedDatabase = mDatabase.child("images").child(getEmail()).push();
 
             String imagem_id = pushedDatabase.getKey();
-            pushedDatabase.child("description").setValue("working on it, please wait :D");
+            pushedDatabase.child("description").setValue("Working on it");
             pushedDatabase.child("ord").setValue(getOrd());
             saveOrd(getOrd() + 1);
             uploadFile(imageBitmap, imagem_id);
