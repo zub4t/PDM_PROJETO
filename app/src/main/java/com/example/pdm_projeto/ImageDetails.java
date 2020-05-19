@@ -36,7 +36,7 @@ public class ImageDetails extends AppCompatDialogFragment {
          inflater = getActivity().getLayoutInflater();
          view =  inflater.inflate(R.layout.image_details,null);
        ImageView mainImage =  view.findViewById(R.id.imgDetails);
-         mainImage.setImageDrawable(Util.resize(imageview.getDrawable(),getResources(),630,300));
+         mainImage.setImageDrawable(Util.resize(imageview.getDrawable(),getResources(),630,630));
 
         mainImage.setPadding(0,0,0,0);
         TextView text =  view.findViewById(R.id.textDetails);
