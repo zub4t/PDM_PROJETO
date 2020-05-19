@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.text.Layout;
 import android.util.Base64;
@@ -64,8 +65,12 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
-    public void setDescription(String desc) {
-        Util.setDescription(desc, this);
+    public String getEmail(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String defaultValue = "";
+        String login= sharedPreferences.getString("login", defaultValue);
+        login = login.replace(".","");
+        return login;
     }
 
     public void saveOrd(int ord) {
@@ -93,10 +98,10 @@ public class MainActivity extends AppCompatActivity {
     private void uploadFile(Bitmap bitmap, String file_name) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReferenceFromUrl("gs://projeto-pdm-17aad.appspot.com");
-        StorageReference mountainImagesRef = storageRef.child("images/teste/" + file_name + ".jpg");
+        StorageReference mountainImagesRef = storageRef.child("images/"+ getEmail() +"/" + file_name + ".jpg");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        openDialog(bitmap, "working on it",true);
+        openDialog(bitmap, "Working on it",true);
 
         uploadBitmap(bitmap, file_name);
         byte[] data = baos.toByteArray();
@@ -124,11 +129,10 @@ public class MainActivity extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReferenceFromUrl("https://projeto-pdm-17aad.firebaseio.com/");
 
-            DatabaseReference pushedDatabase = mDatabase.child("imagens").push();
+            DatabaseReference pushedDatabase = mDatabase.child("images").child(getEmail()).push();
 
             String imagem_id = pushedDatabase.getKey();
-            pushedDatabase.child("nome").setValue(imagem_id);
-            pushedDatabase.child("descricao").setValue("working on it, please wait :D");
+            pushedDatabase.child("description").setValue("working on it, please wait :D");
             pushedDatabase.child("ord").setValue(getOrd());
             saveOrd(getOrd() + 1);
             uploadFile(imageBitmap, imagem_id);
@@ -209,25 +213,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void uploadBitmap(final Bitmap bitmap, final String id) {
         //our custom volley request
-        Log.e("teste", "teste");
         VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, Constant.SERVIDOR_URL + "?ord=" + String.valueOf(getOrd() - 1),
                 new Response.Listener<NetworkResponse>() {
                     @Override
                     public void onResponse(NetworkResponse response) {
                         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReferenceFromUrl("https://projeto-pdm-17aad.firebaseio.com/");
-                        DatabaseReference alterDatabase = mDatabase.child("imagens").child(id);
+                        DatabaseReference alterDatabase = mDatabase.child("imagens").child(getEmail()).child(id);
                         try {
                             JSONObject obj = new JSONObject(new String(response.data));
                             String food = obj.getString("food");
                             String food_description = obj.getString("food_description");
-                            alterDatabase.child("descricao").setValue(food + "\n" + food_description);
+                            alterDatabase.child("description").setValue(food + "\n" + food_description);
                             modal.dismiss();
 
                             openDialog(bitmap, food+"\n"+food_description,false);
 
 
                         } catch (JSONException e) {
-                            alterDatabase.child("descricao").setValue("Not a food");
+                            alterDatabase.child("description").setValue("Not a food");
                             modal.dismiss();
                             openDialog(bitmap, "Not a food",false);
 

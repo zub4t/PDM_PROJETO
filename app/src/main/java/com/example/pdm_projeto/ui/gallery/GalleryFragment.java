@@ -3,6 +3,7 @@ package com.example.pdm_projeto.ui.gallery;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,13 +35,22 @@ import java.util.TreeMap;
 public class GalleryFragment extends Fragment {
     private HashMap<String,ImageContext> imageMap = new HashMap<>();
 
+    public String getEmail(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+        String defaultValue = "";
+        String login= sharedPreferences.getString("login", defaultValue);
+        login = login.replace(".","");
+        return login;
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_gallery, container, false);
        final HashMap<ImageView, ImageContext> list = new HashMap<>();
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReferenceFromUrl("https://projeto-pdm-17aad.firebaseio.com/");
-        DatabaseReference mDatabaseRef = mDatabase.child("imagens");
+        DatabaseReference mDatabaseRef = mDatabase.child("images").child(getEmail());
         mDatabaseRef.orderByKey();
+        getEmail();
         ValueEventListener eventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -48,7 +58,7 @@ public class GalleryFragment extends Fragment {
                     String key = ds.getKey();
                     Object value = ds.getValue();
                     HashMap<String, String> conexao = (HashMap<String, String>) value;
-                    ImageContext imageContext = new ImageContext(conexao.get("descricao"), String.valueOf(conexao.get("ord")));
+                    ImageContext imageContext = new ImageContext(conexao.get("description"), String.valueOf(conexao.get("ord")));
                     imageMap.put(key, imageContext);
                 }
                 FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -59,7 +69,7 @@ public class GalleryFragment extends Fragment {
                 for(String imagem : imageMap.keySet()){
                     final ImageView imageView = new ImageView(root.getContext());
 
-                    String imageUri = "https://firebasestorage.googleapis.com/v0/b/projeto-pdm-17aad.appspot.com/o/images%2Fteste%2F" + imagem + ".jpg?alt=media&token=1727c60b-68ce-421e-a8e2-d7907d654a22";
+                    String imageUri = "https://firebasestorage.googleapis.com/v0/b/projeto-pdm-17aad.appspot.com/o/images%2F"+ getEmail() +"%2F" + imagem + ".jpg?alt=media&token=1727c60b-68ce-421e-a8e2-d7907d654a22";
                     Picasso.with(root.getContext()).load(imageUri).resize(350 ,350).into(imageView);
                     imageView.setPadding(0, 0, 0, 0);
                     ImageContext imageContext = imageMap.get(imagem);

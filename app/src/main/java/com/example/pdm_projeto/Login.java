@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -46,9 +47,10 @@ public class Login extends AppCompatActivity {
         userSignUp = findViewById(R.id.singup);
 
         firebaseAuth = FirebaseAuth.getInstance();
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String defaultValue = "";
-        final String login = sharedPref.getString("login", defaultValue);
+        final String login= sharedPreferences.getString("login", defaultValue);
+
         if(login.equals("")){
             userLogin.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -62,12 +64,10 @@ public class Login extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         progressBar.setVisibility(View.GONE);
                                         if (task.isSuccessful()) {
-                                            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-                                            SharedPreferences.Editor editor = sharedPref.edit();
-                                            editor.putString("login", String.valueOf(userEmail.getText()));
+                                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                            SharedPreferences.Editor editor = prefs.edit();
+                                            editor.putString("login",String.valueOf(userEmail.getText()) );
                                             editor.commit();
-
-
                                             startActivity(new Intent(Login.this, MainActivity.class));
                                         } else {
                                             Toast.makeText(Login.this, task.getException().getMessage(),
