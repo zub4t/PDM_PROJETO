@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.view.MenuItem;
 
@@ -70,10 +71,15 @@ import pl.droidsonroids.gif.GifImageView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
+
     ImageDetails modal;
     private AppBarConfiguration mAppBarConfiguration;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static String ord = "0";
+
+    FirebaseAuth firebaseAuth;
+    FirebaseUser currentUser;
+
     public String getEmail(){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String defaultValue = "";
@@ -181,9 +187,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    FirebaseAuth firebaseAuth;
-    FirebaseUser firebaseUser;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -200,6 +203,10 @@ public class MainActivity extends AppCompatActivity
         });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        //ini
+        firebaseAuth = FirebaseAuth.getInstance();
+        currentUser = firebaseAuth.getCurrentUser();
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -224,6 +231,8 @@ public class MainActivity extends AppCompatActivity
                 return true;
             }
         });
+
+        updateNavHeader();
     }
 
     @Override
@@ -326,6 +335,14 @@ public class MainActivity extends AppCompatActivity
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+
+    public void updateNavHeader() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUserEmail = headerView.findViewById(R.id.nav_userEmail);
+
+        navUserEmail.setText(currentUser.getEmail());
     }
 }
 
