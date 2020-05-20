@@ -79,23 +79,38 @@ public class GalleryFragment extends Fragment {
                     image_list[Integer.parseInt(imageContext.ord)] = imageView;
                     //image_list.add(Integer.parseInt(imageContext.ord), imageView);
                 }
-                List<ImageView> image_list_list = new ArrayList<>();
-                for(int i = 0; i < 100; i++){
-                    final int finalI = i;
-                    if(image_list[i] != null){
-                        image_list_list.add(image_list[i]);
-                        image_list[i].setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                openDialog(image_list[finalI], list.get(image_list[finalI]).description);
+                final List<ImageView> image_list_list = new ArrayList<>();
+                DatabaseReference mDatabaseOrd = FirebaseDatabase.getInstance().getReferenceFromUrl("https://projeto-pdm-17aad.firebaseio.com/");
+                final DatabaseReference pushedDatabaseOrd = mDatabaseOrd.child("ord").child(getEmail());
+                pushedDatabaseOrd.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String ord = "0";
+                        if(dataSnapshot.child("ord").getValue(String.class) != null){
+                            ord = dataSnapshot.child("ord").getValue(String.class);
+                        }
+                        for(int i = 0; i < Long.parseLong(ord); i++){
+                            final int finalI = i;
+                            if(image_list[i] != null){
+                                image_list_list.add(image_list[i]);
+                                image_list[i].setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        openDialog(image_list[finalI], list.get(image_list[finalI]).description);
+                                    }
+                                });
                             }
-                    });
+                        }
+                        ImageAdapter imageAdapter = new ImageAdapter(root.getContext(), image_list_list);
+                        GridView  gridView = (GridView) root.findViewById(R.id.gridView);
+                        gridView.setAdapter(imageAdapter);
                     }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                }
-                ImageAdapter imageAdapter = new ImageAdapter(root.getContext(), image_list_list);
-                GridView  gridView = (GridView) root.findViewById(R.id.gridView);
-                gridView.setAdapter(imageAdapter);
+                    }
+                });
+
             }
 
             @Override
