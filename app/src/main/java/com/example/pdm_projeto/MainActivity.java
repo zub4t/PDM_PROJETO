@@ -38,8 +38,11 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -70,7 +73,7 @@ public class MainActivity extends AppCompatActivity
     ImageDetails modal;
     private AppBarConfiguration mAppBarConfiguration;
     static final int REQUEST_IMAGE_CAPTURE = 1;
-
+    static String ord = "0";
     public String getEmail(){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String defaultValue = "";
@@ -79,18 +82,11 @@ public class MainActivity extends AppCompatActivity
         return login;
     }
 
-    public void saveOrd(int ord) {
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt("ord", ord);
-        editor.commit();
-    }
+    public void saveOrd(String ord) {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReferenceFromUrl("https://projeto-pdm-17aad.firebaseio.com/");
 
-    public int getOrd() {
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        int defaultValue = 0;
-        int ord = sharedPref.getInt("ord", defaultValue);
-        return ord;
+        DatabaseReference pushedDatabase = mDatabase.child("ord").child(getEmail());
+        pushedDatabase.child("ord").setValue(ord);
     }
 
     public void openDialog(Bitmap v, String str,boolean show) {
@@ -132,16 +128,30 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            final Bitmap imageBitmap = (Bitmap) extras.get("data");
             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReferenceFromUrl("https://projeto-pdm-17aad.firebaseio.com/");
 
-            DatabaseReference pushedDatabase = mDatabase.child("images").child(getEmail()).push();
+            final DatabaseReference pushedDatabase = mDatabase.child("images").child(getEmail()).push();
 
-            String imagem_id = pushedDatabase.getKey();
-            pushedDatabase.child("description").setValue("Working on it");
-            pushedDatabase.child("ord").setValue(getOrd());
-            saveOrd(getOrd() + 1);
-            uploadFile(imageBitmap, imagem_id);
+            final String imagem_id = pushedDatabase.getKey();
+            DatabaseReference mDatabaseOrd = FirebaseDatabase.getInstance().getReferenceFromUrl("https://projeto-pdm-17aad.firebaseio.com/");
+            final DatabaseReference pushedDatabaseOrd = mDatabase.child("ord").child(getEmail());
+            pushedDatabaseOrd.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    ord = dataSnapshot.child("ord").getValue(String.class);
+                    pushedDatabase.child("description").setValue("Working on it");
+                    pushedDatabase.child("ord").setValue(String.valueOf(ord));
+                    ord = String.valueOf(Long.parseLong(ord) + 1);
+                    saveOrd(ord);
+                    uploadFile(imageBitmap, imagem_id);
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
         }
     }
 
@@ -235,7 +245,7 @@ public class MainActivity extends AppCompatActivity
 
     private void uploadBitmap(final Bitmap bitmap, final String id) {
         //our custom volley request
-        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, Constant.SERVIDOR_URL + "?ord=" + String.valueOf(getOrd() - 1),
+        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, Constant.SERVIDOR_URL,
                 new Response.Listener<NetworkResponse>() {
                     @Override
                     public void onResponse(NetworkResponse response) {
