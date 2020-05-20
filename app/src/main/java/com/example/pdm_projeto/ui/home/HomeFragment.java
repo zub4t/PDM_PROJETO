@@ -38,7 +38,7 @@ public class HomeFragment extends Fragment {
 
         timeLineRv = root.findViewById(R.id.timeline_rv);
         timeLineRv.setLayoutManager(new LinearLayoutManager(root.getContext()));
-        mdata = DataSource.getTimeLineData();
+        mdata = DataSource.getTimeLineData(root.getContext());
         timelineAdapter = new TimelineAdapter(root.getContext(),mdata);
         timeLineRv.setAdapter(timelineAdapter);
         return root;

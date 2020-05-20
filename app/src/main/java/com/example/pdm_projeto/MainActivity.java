@@ -82,6 +82,13 @@ public class MainActivity extends AppCompatActivity
         return login;
     }
 
+    public String getEmailWithDot(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String defaultValue = "";
+        String login= sharedPreferences.getString("login", defaultValue);
+        return login;
+    }
+
     public void saveOrd(String ord) {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReferenceFromUrl("https://projeto-pdm-17aad.firebaseio.com/");
 
@@ -250,7 +257,7 @@ public class MainActivity extends AppCompatActivity
 
     private void uploadBitmap(final Bitmap bitmap, final String id) {
         //our custom volley request
-        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, Constant.SERVIDOR_URL,
+        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, Constant.SERVIDOR_URL + "?email=" + getEmailWithDot(),
                 new Response.Listener<NetworkResponse>() {
                     @Override
                     public void onResponse(NetworkResponse response) {
