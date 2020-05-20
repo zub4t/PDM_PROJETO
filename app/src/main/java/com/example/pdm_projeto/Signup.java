@@ -1,5 +1,6 @@
 package com.example.pdm_projeto;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -53,6 +54,7 @@ public class Signup extends AppCompatActivity {
                                             Toast.LENGTH_LONG).show();
                                     email.setText("");
                                     password.setText("");
+                                    startActivity(new Intent(Signup.this, Login.class));
                                 }else{
                                     Toast.makeText(Signup.this, task.getException().getMessage(),
                                             Toast.LENGTH_LONG).show();
