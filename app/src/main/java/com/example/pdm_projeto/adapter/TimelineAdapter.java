@@ -1,6 +1,8 @@
 package com.example.pdm_projeto.adapter;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +17,14 @@ import com.example.pdm_projeto.model.TimelineItem;
 
 import java.util.List;
 
+
 public class TimelineAdapter extends RecyclerView.Adapter<BaseViewHolder> {
+    public String getEmailWithDot(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.mContext);
+        String defaultValue = "";
+        String login= sharedPreferences.getString("login", defaultValue);
+        return login;
+    }
     private Context mContext;
     private List<TimelineItem> mdata;
 
@@ -47,17 +56,17 @@ public class TimelineAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             case (Constant.ITEM_HEADER_TEXT_VIEWTYPE_TODAY):
                 view = LayoutInflater.from(mContext).inflate(R.layout.item_post_text,parent,false);
                 item =   new PostTextViewHolder(view);
-                DataSource.getCalories(view.getContext(),"http://pdmfcup.ddns.net:8084/PDM/webServicePDM?func=getToday",item.getTxtPost());
+                DataSource.getCalories(view.getContext(),"http://pdmfcup.ddns.net:8084/PDM/webServicePDM?func=getToday&email=" + getEmailWithDot(),item.getTxtPost());
                 return item;
             case (Constant.ITEM_HEADER_TEXT_VIEWTYPE_WEEK):
                 view = LayoutInflater.from(mContext).inflate(R.layout.item_post_text,parent,false);
                 item = new PostTextViewHolder(view);
-                DataSource.getCalories(view.getContext(),"http://pdmfcup.ddns.net:8084/PDM/webServicePDM?func=getWeek",item.getTxtPost());
+                DataSource.getCalories(view.getContext(),"http://pdmfcup.ddns.net:8084/PDM/webServicePDM?func=getWeek&email=" + getEmailWithDot(),item.getTxtPost());
                 return item;
             case (Constant.ITEM_HEADER_TEXT_VIEWTYPE_MONTH):
                 view = LayoutInflater.from(mContext).inflate(R.layout.item_post_text,parent,false);
                 item = new PostTextViewHolder(view);
-                DataSource.getCalories(view.getContext(),"http://pdmfcup.ddns.net:8084/PDM/webServicePDM?func=getMonth",item.getTxtPost());
+                DataSource.getCalories(view.getContext(),"http://pdmfcup.ddns.net:8084/PDM/webServicePDM?func=getMonth&email=" + getEmailWithDot(),item.getTxtPost());
                 return item;
             default: throw  new IllegalArgumentException();
 
