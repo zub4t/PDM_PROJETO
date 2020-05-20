@@ -51,7 +51,7 @@ public class ImageDetails extends AppCompatDialogFragment {
         TextView title = new TextView(getActivity().getBaseContext());
 // You Can Customise your Title here
         title.setText("Image Description");
-        title.setBackgroundColor(Color.rgb(98,0,238));
+        title.setBackgroundResource(R.color.colorPrimary);
         title.setPadding(10, 10, 10, 10);
         title.setGravity(Gravity.CENTER);
         title.setTextColor(Color.WHITE);
