@@ -139,7 +139,9 @@ public class MainActivity extends AppCompatActivity
             pushedDatabaseOrd.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    ord = dataSnapshot.child("ord").getValue(String.class);
+                    if(dataSnapshot.child("ord").getValue(String.class) != null){
+                        ord = dataSnapshot.child("ord").getValue(String.class);
+                    }
                     pushedDatabase.child("description").setValue("Working on it");
                     pushedDatabase.child("ord").setValue(String.valueOf(ord));
                     ord = String.valueOf(Long.parseLong(ord) + 1);
