@@ -68,7 +68,10 @@ public class Login extends AppCompatActivity {
                                             SharedPreferences.Editor editor = prefs.edit();
                                             editor.putString("login",String.valueOf(userEmail.getText()) );
                                             editor.commit();
-                                            startActivity(new Intent(Login.this, MainActivity.class));
+
+                                            Intent intent = new Intent(Login.this, MainActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(intent);
                                         } else {
                                             Toast.makeText(Login.this, task.getException().getMessage(),
                                                     Toast.LENGTH_LONG).show();
@@ -79,7 +82,9 @@ public class Login extends AppCompatActivity {
                 }
             });
         } else {
-            startActivity(new Intent(Login.this, MainActivity.class));
+            Intent intent = new Intent(Login.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         }
 
 
