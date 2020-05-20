@@ -74,7 +74,7 @@ public class GalleryFragment extends Fragment {
                     imageView.setPadding(0, 0, 0, 0);
                     ImageContext imageContext = imageMap.get(imagem);
                     list.put(imageView, imageMap.get(imagem));
-                    if(Integer.parseInt(imageContext.ord) > max_pos)
+                    if(imageContext.ord!=null && Integer.parseInt(imageContext.ord) > max_pos)
                         max_pos = Integer.parseInt(imageContext.ord);
                     image_list[Integer.parseInt(imageContext.ord)] = imageView;
                     //image_list.add(Integer.parseInt(imageContext.ord), imageView);

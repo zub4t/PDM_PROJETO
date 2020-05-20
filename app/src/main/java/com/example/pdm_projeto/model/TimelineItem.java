@@ -18,6 +18,11 @@ public class TimelineItem {
         viewType = Constant.ITEM_POST_TEXT_VIEWTYPE;
 
     }
+    public TimelineItem(PostTextItem postTextItem,int type) {
+        this.postTextItem = postTextItem;
+        viewType = type;
+
+    }
 
     public TimelineItem(PostVideoItem postVideoItem) {
         this.postVideoItem = postVideoItem;

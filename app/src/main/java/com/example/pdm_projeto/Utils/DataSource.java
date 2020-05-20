@@ -2,6 +2,7 @@ package com.example.pdm_projeto.Utils;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -28,14 +29,14 @@ import java.util.List;
 public class DataSource {
 
 
-    public static void getCalories(Context context, final String url, final PostTextItem postTextItem) {
+    public static void getCalories(Context context, final String url, final TextView view) {
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            postTextItem.setPostText("Kcal Count: " + response.get("calories"));
+                            view.setText("Kcal Count: " + response.get("calories"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -63,12 +64,10 @@ public class DataSource {
         HeaderTextItem itemHeader = new HeaderTextItem("Today");
         TimelineItem headerTimeLineItem = new TimelineItem(itemHeader);
         PostTextItem postTextItem = new PostTextItem("Kcal Count: 100", R.drawable.user1, getCurrentTime());
-        getCalories(context, "http://pdmfcup.ddns.net:8084/PDM/webServicePDM?func=getToday", postTextItem);
-        TimelineItem postTextTimeLineItem = new TimelineItem(postTextItem);
+        TimelineItem postTextTimeLineItem = new TimelineItem(postTextItem,3);
         itemHeader = new HeaderTextItem("This week");
         TimelineItem headerTimeLineItem2 = new TimelineItem(itemHeader);
         postTextItem = new PostTextItem("Kcal Count: 2000", R.drawable.user1, getCurrentTime());
-        getCalories(context, "http://pdmfcup.ddns.net:8084/PDM/webServicePDM?func=getWeek", postTextItem);
         TimelineItem postTextTimeLineItem2 = new TimelineItem(postTextItem);
         mdata.add(headerTimeLineItem);
         mdata.add(postTextTimeLineItem);

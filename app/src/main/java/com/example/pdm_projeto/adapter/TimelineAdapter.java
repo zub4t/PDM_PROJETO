@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pdm_projeto.R;
 import com.example.pdm_projeto.Utils.Constant;
+import com.example.pdm_projeto.Utils.DataSource;
 import com.example.pdm_projeto.model.TimelineItem;
 
 import java.util.List;
@@ -42,6 +43,11 @@ public class TimelineAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             case (Constant.ITEM_POST_VIDEO_VIEWTYPE):
                 view = LayoutInflater.from(mContext).inflate(R.layout.item_post_video,parent,false);
                 return new PostVideoViewHolder(view);
+            case (Constant.ITEM_HEADER_TEXT_VIEWTYPE_TODAY):
+                view = LayoutInflater.from(mContext).inflate(R.layout.item_post_text,parent,false);
+                PostTextViewHolder item =   new PostTextViewHolder(view);
+                DataSource.getCalories(view.getContext(),"http://pdmfcup.ddns.net:8084/PDM/webServicePDM?func=getToday",item.getTxtPost());
+                return item;
             default: throw  new IllegalArgumentException();
 
         }

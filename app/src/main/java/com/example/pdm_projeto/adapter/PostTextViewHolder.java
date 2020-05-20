@@ -21,6 +21,30 @@ public class PostTextViewHolder extends BaseViewHolder {
         imgUser = itemView.findViewById(R.id.post_text_img);
     }
 
+    public TextView getTxtPost() {
+        return txtPost;
+    }
+
+    public void setTxtPost(TextView txtPost) {
+        this.txtPost = txtPost;
+    }
+
+    public TextView getTxtTime() {
+        return txtTime;
+    }
+
+    public void setTxtTime(TextView txtTime) {
+        this.txtTime = txtTime;
+    }
+
+    public ImageView getImgUser() {
+        return imgUser;
+    }
+
+    public void setImgUser(ImageView imgUser) {
+        this.imgUser = imgUser;
+    }
+
     @Override
     void setData(TimelineItem item) {
         PostTextItem post = item.getPostTextItem();
