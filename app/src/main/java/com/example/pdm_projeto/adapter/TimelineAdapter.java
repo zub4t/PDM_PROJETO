@@ -33,6 +33,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     @Override
     public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
+        PostTextViewHolder item = null;
         switch (viewType){
             case (Constant.ITEM_HEADER_TEXT_VIEWTYPE):
                 view = LayoutInflater.from(mContext).inflate(R.layout.item_header,parent,false);
@@ -45,8 +46,18 @@ public class TimelineAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 return new PostVideoViewHolder(view);
             case (Constant.ITEM_HEADER_TEXT_VIEWTYPE_TODAY):
                 view = LayoutInflater.from(mContext).inflate(R.layout.item_post_text,parent,false);
-                PostTextViewHolder item =   new PostTextViewHolder(view);
+                item =   new PostTextViewHolder(view);
                 DataSource.getCalories(view.getContext(),"http://pdmfcup.ddns.net:8084/PDM/webServicePDM?func=getToday",item.getTxtPost());
+                return item;
+            case (Constant.ITEM_HEADER_TEXT_VIEWTYPE_WEEK):
+                view = LayoutInflater.from(mContext).inflate(R.layout.item_post_text,parent,false);
+                item = new PostTextViewHolder(view);
+                DataSource.getCalories(view.getContext(),"http://pdmfcup.ddns.net:8084/PDM/webServicePDM?func=getWeek",item.getTxtPost());
+                return item;
+            case (Constant.ITEM_HEADER_TEXT_VIEWTYPE_MONTH):
+                view = LayoutInflater.from(mContext).inflate(R.layout.item_post_text,parent,false);
+                item = new PostTextViewHolder(view);
+                DataSource.getCalories(view.getContext(),"http://pdmfcup.ddns.net:8084/PDM/webServicePDM?func=getMonth",item.getTxtPost());
                 return item;
             default: throw  new IllegalArgumentException();
 

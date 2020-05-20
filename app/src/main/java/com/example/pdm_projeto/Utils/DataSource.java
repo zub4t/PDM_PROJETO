@@ -68,11 +68,17 @@ public class DataSource {
         itemHeader = new HeaderTextItem("This week");
         TimelineItem headerTimeLineItem2 = new TimelineItem(itemHeader);
         postTextItem = new PostTextItem("Kcal Count: 2000", R.drawable.user1, getCurrentTime());
-        TimelineItem postTextTimeLineItem2 = new TimelineItem(postTextItem);
+        TimelineItem postTextTimeLineItem2 = new TimelineItem(postTextItem,4);
+        itemHeader = new HeaderTextItem("This month");
+        TimelineItem headerTimeLineItem3 = new TimelineItem(itemHeader);
+        postTextItem = new PostTextItem("Kcal Count: 2000", R.drawable.user1, getCurrentTime());
+        TimelineItem postTextTimeLineItem3 = new TimelineItem(postTextItem,5);
         mdata.add(headerTimeLineItem);
         mdata.add(postTextTimeLineItem);
         mdata.add(headerTimeLineItem2);
         mdata.add(postTextTimeLineItem2);
+        mdata.add(headerTimeLineItem3);
+        mdata.add(postTextTimeLineItem3);
         return mdata;
     }
 }
