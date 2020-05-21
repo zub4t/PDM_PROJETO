@@ -1,13 +1,16 @@
 package com.example.pdm_projeto;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -50,6 +53,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -70,28 +76,29 @@ import java.util.Map;
 import pl.droidsonroids.gif.GifImageView;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     ImageDetails modal;
     private AppBarConfiguration mAppBarConfiguration;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static String ord = "0";
+    private static final int MY_CAMERA_REQUEST_CODE = 100;
 
     FirebaseAuth firebaseAuth;
     FirebaseUser currentUser;
 
-    public String getEmail(){
+    public String getEmail() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String defaultValue = "";
-        String login= sharedPreferences.getString("login", defaultValue);
-        login = login.replace(".","");
+        String login = sharedPreferences.getString("login", defaultValue);
+        login = login.replace(".", "");
         return login;
     }
 
-    public String getEmailWithDot(){
+    public String getEmailWithDot() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String defaultValue = "";
-        String login= sharedPreferences.getString("login", defaultValue);
+        String login = sharedPreferences.getString("login", defaultValue);
         return login;
     }
 
@@ -102,7 +109,7 @@ public class MainActivity extends AppCompatActivity
         pushedDatabase.child("ord").setValue(ord);
     }
 
-    public void openDialog(Bitmap v, String str,boolean show) {
+    public void openDialog(Bitmap v, String str, boolean show) {
         ImageView imageView = new ImageView(this);
         imageView.setImageBitmap(v);
         modal = new ImageDetails(imageView, str, show);
@@ -113,10 +120,10 @@ public class MainActivity extends AppCompatActivity
     private void uploadFile(Bitmap bitmap, String file_name) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReferenceFromUrl("gs://projeto-pdm-17aad.appspot.com");
-        StorageReference mountainImagesRef = storageRef.child("images/"+ getEmail() +"/" + file_name + ".jpg");
+        StorageReference mountainImagesRef = storageRef.child("images/" + getEmail() + "/" + file_name + ".jpg");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        openDialog(bitmap, "Working on it",true);
+        openDialog(bitmap, "Working on it", true);
 
         uploadBitmap(bitmap, file_name);
         byte[] data = baos.toByteArray();
@@ -152,7 +159,7 @@ public class MainActivity extends AppCompatActivity
             pushedDatabaseOrd.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.child("ord").getValue(String.class) != null){
+                    if (dataSnapshot.child("ord").getValue(String.class) != null) {
                         ord = dataSnapshot.child("ord").getValue(String.class);
                     }
                     pushedDatabase.child("description").setValue("Working on it");
@@ -161,6 +168,7 @@ public class MainActivity extends AppCompatActivity
                     saveOrd(ord);
                     uploadFile(imageBitmap, imagem_id);
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
@@ -170,21 +178,48 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        /*
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                    Uri.parse("package:" + getPackageName()));
-            finish();
-            startActivity(intent);
-            return;
-        }*/
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_CAMERA_REQUEST_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
+
+                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                    }
+                } else {
+                    Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
+
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
         }
+    }
+
+
+
+    private void dispatchTakePictureIntent() {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
+        }else{
+
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+
     }
 
     @Override
@@ -279,13 +314,13 @@ public class MainActivity extends AppCompatActivity
                             alterDatabase.child("description").setValue(food + "\n" + food_description);
                             modal.dismiss();
 
-                            openDialog(bitmap, food+"\n"+food_description,false);
+                            openDialog(bitmap, food + "\n" + food_description, false);
 
 
                         } catch (JSONException e) {
                             alterDatabase.child("description").setValue("Not a food");
                             modal.dismiss();
-                            openDialog(bitmap, "Not a food",false);
+                            openDialog(bitmap, "Not a food", false);
 
                         }
                     }
@@ -328,7 +363,7 @@ public class MainActivity extends AppCompatActivity
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("login","");
+        editor.putString("login", "");
         editor.commit();
 
         Intent intent = new Intent(MainActivity.this, Login.class);
