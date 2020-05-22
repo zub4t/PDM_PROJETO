@@ -39,6 +39,19 @@ public class ImageDetails extends AppCompatDialogFragment {
          mainImage.setImageDrawable(Util.resize(imageview.getDrawable(),getResources(),630,630));
 
         mainImage.setPadding(0,0,0,0);
+
+        //getting name of food int the photo title
+        String descriptionName = "";
+        int i;
+        for (i = 0; i < this.description.length(); i++) {
+            if (this.description.charAt(i) != '\n') {
+                descriptionName += this.description.charAt(i);
+            }else{
+                break;
+            }
+        }
+        this.description = this.description.substring(i);
+
         TextView text =  view.findViewById(R.id.textDetails);
         text.setText(this.description);
         if(show){
@@ -47,10 +60,9 @@ public class ImageDetails extends AppCompatDialogFragment {
         }
 
         Log.d("img ",mainImage.getDrawable().toString());
-
         TextView title = new TextView(getActivity().getBaseContext());
 // You Can Customise your Title here
-        title.setText("Image Description");
+        title.setText(descriptionName);
         title.setBackgroundResource(R.color.colorPrimary);
         title.setPadding(10, 10, 10, 10);
         title.setGravity(Gravity.CENTER);
