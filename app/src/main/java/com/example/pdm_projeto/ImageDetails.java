@@ -11,13 +11,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
-import androidx.appcompat.widget.AlertDialogLayout;
 
 import com.example.pdm_projeto.ui.gallery.Util;
 
@@ -40,7 +38,7 @@ public class ImageDetails extends AppCompatDialogFragment {
 
         mainImage.setPadding(0,0,0,0);
 
-        //getting name of food int the photo title
+        //Getting name of food int the photo title
         String descriptionName = "";
         int i;
         for (i = 0; i < this.description.length(); i++) {
@@ -61,7 +59,8 @@ public class ImageDetails extends AppCompatDialogFragment {
 
         Log.d("img ",mainImage.getDrawable().toString());
         TextView title = new TextView(getActivity().getBaseContext());
-// You Can Customise your Title here
+
+        // You Can Customise your Title here
         title.setText(descriptionName);
         title.setBackgroundResource(R.color.colorPrimary);
         title.setPadding(10, 10, 10, 10);
